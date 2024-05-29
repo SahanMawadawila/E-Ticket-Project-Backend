@@ -86,6 +86,11 @@ const busSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  selectedDays: {
+    weekDays: Boolean,
+    sunday: Boolean,
+    saturday: Boolean,
+  },
 });
 
 module.exports = mongoose.model("Bus", busSchema);

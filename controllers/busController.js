@@ -1,10 +1,12 @@
 const Bus = require("../model/Bus");
 const asyncHandler = require("express-async-handler");
+const fs = require("fs");
+const dayjs = require("dayjs");
 
 //get all busses name,numberplate,route
 const getBuses = asyncHandler(async (req, res) => {
   const buses = await Bus.find()
-    .select("-seats -capacity -noOfAlocatedSeats")
+    .select("-seats -capacity -noOfAlocatedSeats -selectedDays")
     .lean();
 
   if (!buses) {
@@ -26,7 +28,10 @@ const addBus = asyncHandler(async (req, res) => {
     BusTo,
     numberPlate,
     table,
+    selectedDays,
   } = req.body;
+
+  console.log(req.body);
 
   const imageExists = req.files.length;
   if (
@@ -38,13 +43,24 @@ const addBus = asyncHandler(async (req, res) => {
     !BusTo ||
     !numberPlate ||
     !imageExists ||
-    !table
+    !table ||
+    !selectedDays
   ) {
     res.sendStatus(400);
   }
   const busFrom = JSON.parse(BusFrom);
   const busTo = JSON.parse(BusTo);
   const routeVariable = JSON.parse(table);
+  const selectedDaysVar = JSON.parse(selectedDays);
+
+  if (
+    !routeVariable.length ||
+    !busFrom.city ||
+    !busTo.city ||
+    !busFrom.departureTime ||
+    !busTo.arrivalTime
+  )
+    return res.sendStatus(400);
 
   const bus = new Bus({
     routeNumber,
@@ -55,6 +71,7 @@ const addBus = asyncHandler(async (req, res) => {
     busTo,
     numberPlate,
     route: routeVariable,
+    selectedDays: selectedDaysVar,
   });
 
   const nonBookableSeats = capacity - noOfAlocatedSeats;
@@ -70,7 +87,24 @@ const addBus = asyncHandler(async (req, res) => {
       bus.seats.push({
         seatNumber: i,
         isBookable: true,
-        availability: [],
+        availability: [
+          {
+            date: dayjs().format("YYYY-MM-DD"),
+            booked: [],
+          },
+          {
+            date: dayjs().add(1, "day").format("YYYY-MM-DD"),
+            booked: [],
+          },
+          {
+            date: dayjs().add(2, "day").format("YYYY-MM-DD"),
+            booked: [],
+          },
+          {
+            date: dayjs().add(3, "day").format("YYYY-MM-DD"),
+            booked: [],
+          },
+        ],
       });
     }
   }
@@ -100,11 +134,18 @@ const getBus = asyncHandler(async (req, res) => {
 //delete bus by id
 
 const deleteBus = asyncHandler(async (req, res) => {
+  const imageURLS = await Bus.findById(req.params.id).select("imagesURLs");
   const bus = await Bus.findByIdAndDelete(req.params.id);
   if (!bus) {
     return res.sendStatus(404);
   }
   res.json({ message: "Bus deleted successfully" });
+
+  //delete images
+  imageURLS.imagesURLs.forEach((image) => {
+    fs.unlinkSync(`uploads/${image}`);
+    console.log(`uploads/${image} deleted successfully`);
+  });
 });
 
 //get bus by route

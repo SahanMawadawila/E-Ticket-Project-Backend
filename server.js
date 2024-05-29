@@ -7,6 +7,10 @@ const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/dbconn");
 const mongoose = require("mongoose");
+const { task1 } = require("./jobs/DailyJob");
+
+// Start the cron job
+task1.start();
 
 const PORT = process.env.PORT || 3200;
 const app = express();
@@ -22,6 +26,8 @@ app.use("/", require("./routes/root"));
 app.use("/auth/checker", require("./routes/authChecker"));
 app.use("/auth/admin", require("./routes/authAdmin"));
 app.use("/bus", require("./routes/bus"));
+app.use("/cities", require("./routes/api/getAllCities"));
+app.use("/search", require("./routes/search"));
 
 app.all("*", (req, res) => {
   res.status(404);
