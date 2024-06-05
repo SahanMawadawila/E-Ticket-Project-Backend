@@ -2,11 +2,12 @@ const Bus = require("../model/Bus");
 const asyncHandler = require("express-async-handler");
 const fs = require("fs");
 const dayjs = require("dayjs");
+const weekdayOrWeekendFinder = require("../utils/weekdayOrWeekendFinder");
 
 //get all busses name,numberplate,route
 const getBuses = asyncHandler(async (req, res) => {
   const buses = await Bus.find()
-    .select("-seats -capacity -noOfAlocatedSeats -selectedDays")
+    .select("-seats -capacity -noOfAlocatedSeats -selectedDays -minHalts")
     .lean();
 
   if (!buses) {
@@ -29,6 +30,7 @@ const addBus = asyncHandler(async (req, res) => {
     numberPlate,
     table,
     selectedDays,
+    minHalts,
   } = req.body;
 
   console.log(req.body);
@@ -44,7 +46,8 @@ const addBus = asyncHandler(async (req, res) => {
     !numberPlate ||
     !imageExists ||
     !table ||
-    !selectedDays
+    !selectedDays ||
+    !minHalts
   ) {
     res.sendStatus(400);
   }
@@ -72,9 +75,17 @@ const addBus = asyncHandler(async (req, res) => {
     numberPlate,
     route: routeVariable,
     selectedDays: selectedDaysVar,
+    minHalts,
   });
 
   const nonBookableSeats = capacity - noOfAlocatedSeats;
+
+  const bookedArray = routeVariable.map((obj) => {
+    return {
+      city: obj.city,
+      taken: false,
+    };
+  });
 
   for (let i = 1; i <= capacity; i++) {
     if (i <= nonBookableSeats) {
@@ -87,24 +98,17 @@ const addBus = asyncHandler(async (req, res) => {
       bus.seats.push({
         seatNumber: i,
         isBookable: true,
-        availability: [
-          {
-            date: dayjs().format("YYYY-MM-DD"),
-            booked: [],
-          },
-          {
-            date: dayjs().add(1, "day").format("YYYY-MM-DD"),
-            booked: [],
-          },
-          {
-            date: dayjs().add(2, "day").format("YYYY-MM-DD"),
-            booked: [],
-          },
-          {
-            date: dayjs().add(3, "day").format("YYYY-MM-DD"),
-            booked: [],
-          },
-        ],
+        availability: Array.from({ length: 4 }, (_, i) => {
+          if (
+            selectedDaysVar[weekdayOrWeekendFinder(dayjs().add(i, "day"))] ===
+            true
+          ) {
+            return {
+              date: dayjs().add(i, "day").format("YYYY-MM-DD"),
+              booked: bookedArray,
+            };
+          }
+        }).filter(Boolean), //to remove undefined values whn selectedDaysVar[weekdayOrWeekendFinder(dayjs().add(i, "day"))] is false
       });
     }
   }

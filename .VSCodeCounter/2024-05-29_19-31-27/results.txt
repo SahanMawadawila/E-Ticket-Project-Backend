@@ -1,0 +1,70 @@
+Date : 2024-05-29 19:31:27
+Directory : d:\sem 5\project\E_ticket_system\backend
+Total : 29 files,  3000 codes, 13 comments, 118 blanks, all 3131 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          2 |      2,019 |          0 |          2 |      2,021 |
+| JavaScript |         23 |        939 |         13 |        108 |      1,060 |
+| HTML       |          2 |         26 |          0 |          4 |         30 |
+| CSS        |          1 |         13 |          0 |          2 |         15 |
+| Markdown   |          1 |          3 |          0 |          2 |          5 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                           | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                              |         29 |      3,000 |         13 |        118 |      3,131 |
+| . (Files)                                                                      |          4 |      2,064 |          1 |         12 |      2,077 |
+| config                                                                         |          3 |         23 |          0 |          7 |         30 |
+| controllers                                                                    |          5 |        232 |         10 |         39 |        281 |
+| jobs                                                                           |          1 |         65 |          1 |          7 |         73 |
+| middleware                                                                     |          2 |         32 |          1 |          9 |         42 |
+| model                                                                          |          3 |        116 |          0 |         11 |        127 |
+| public                                                                         |          1 |         13 |          0 |          2 |         15 |
+| public\css                                                                     |          1 |         13 |          0 |          2 |         15 |
+| routes                                                                         |          6 |         63 |          0 |         22 |         85 |
+| routes (Files)                                                                 |          5 |         58 |          0 |         18 |         76 |
+| routes\api                                                                     |          1 |          5 |          0 |          4 |          9 |
+| utils                                                                          |          2 |        366 |          0 |          5 |        371 |
+| views                                                                          |          2 |         26 |          0 |          4 |         30 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                       | language   | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\sem 5\project\E_ticket_system\backend\UserStories.md                        | Markdown   |          3 |          0 |          2 |          5 |
+| d:\sem 5\project\E_ticket_system\backend\config\allowedOrigins.js              | JavaScript |          2 |          0 |          1 |          3 |
+| d:\sem 5\project\E_ticket_system\backend\config\corsOptions.js                 | JavaScript |         12 |          0 |          3 |         15 |
+| d:\sem 5\project\E_ticket_system\backend\config\dbconn.js                      | JavaScript |          9 |          0 |          3 |         12 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\authAdminController.js    | JavaScript |         15 |          1 |          3 |         19 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\authCheckerController.js  | JavaScript |         15 |          1 |          3 |         19 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\busController.js          | JavaScript |        131 |          8 |         19 |        158 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\getAllCitiesController.js | JavaScript |         21 |          0 |          3 |         24 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\searchController.js       | JavaScript |         50 |          0 |         11 |         61 |
+| d:\sem 5\project\E_ticket_system\backend\jobs\DailyJob.js                      | JavaScript |         65 |          1 |          7 |         73 |
+| d:\sem 5\project\E_ticket_system\backend\middleware\errorHandle.js             | JavaScript |          7 |          0 |          3 |         10 |
+| d:\sem 5\project\E_ticket_system\backend\middleware\logEvents.js               | JavaScript |         25 |          1 |          6 |         32 |
+| d:\sem 5\project\E_ticket_system\backend\model\Admin.js                        | JavaScript |         12 |          0 |          3 |         15 |
+| d:\sem 5\project\E_ticket_system\backend\model\Bus.js                          | JavaScript |         92 |          0 |          5 |         97 |
+| d:\sem 5\project\E_ticket_system\backend\model\Checker.js                      | JavaScript |         12 |          0 |          3 |         15 |
+| d:\sem 5\project\E_ticket_system\backend\package-lock.json                     | JSON       |      1,989 |          0 |          1 |      1,990 |
+| d:\sem 5\project\E_ticket_system\backend\package.json                          | JSON       |         30 |          0 |          1 |         31 |
+| d:\sem 5\project\E_ticket_system\backend\public\css\stye.css                   | CSS        |         13 |          0 |          2 |         15 |
+| d:\sem 5\project\E_ticket_system\backend\routes\api\getAllCities.js            | JavaScript |          5 |          0 |          4 |          9 |
+| d:\sem 5\project\E_ticket_system\backend\routes\authAdmin.js                   | JavaScript |          5 |          0 |          3 |          8 |
+| d:\sem 5\project\E_ticket_system\backend\routes\authChecker.js                 | JavaScript |          5 |          0 |          3 |          8 |
+| d:\sem 5\project\E_ticket_system\backend\routes\bus.js                         | JavaScript |         36 |          0 |          5 |         41 |
+| d:\sem 5\project\E_ticket_system\backend\routes\root.js                        | JavaScript |          7 |          0 |          3 |         10 |
+| d:\sem 5\project\E_ticket_system\backend\routes\search.js                      | JavaScript |          5 |          0 |          4 |          9 |
+| d:\sem 5\project\E_ticket_system\backend\server.js                             | JavaScript |         42 |          1 |          8 |         51 |
+| d:\sem 5\project\E_ticket_system\backend\utils\normalTicketPrices.js           | JavaScript |        353 |          0 |          2 |        355 |
+| d:\sem 5\project\E_ticket_system\backend\utils\weekdayOrWeekendFinder.js       | JavaScript |         13 |          0 |          3 |         16 |
+| d:\sem 5\project\E_ticket_system\backend\views\404.html                        | HTML       |         13 |          0 |          2 |         15 |
+| d:\sem 5\project\E_ticket_system\backend\views\index.html                      | HTML       |         13 |          0 |          2 |         15 |
+| Total                                                                          |            |      3,000 |         13 |        118 |      3,131 |
++--------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

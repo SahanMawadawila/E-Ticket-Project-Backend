@@ -1,0 +1,31 @@
+"filename", "language", "Markdown", "HTML", "JavaScript", "JSON", "CSS", "comment", "blank", "total"
+"d:\sem 5\project\E_ticket_system\backend\UserStories.md", "Markdown", 3, 0, 0, 0, 0, 0, 2, 5
+"d:\sem 5\project\E_ticket_system\backend\config\allowedOrigins.js", "JavaScript", 0, 0, 2, 0, 0, 0, 1, 3
+"d:\sem 5\project\E_ticket_system\backend\config\corsOptions.js", "JavaScript", 0, 0, 12, 0, 0, 0, 3, 15
+"d:\sem 5\project\E_ticket_system\backend\config\dbconn.js", "JavaScript", 0, 0, 9, 0, 0, 0, 3, 12
+"d:\sem 5\project\E_ticket_system\backend\controllers\authAdminController.js", "JavaScript", 0, 0, 15, 0, 0, 1, 3, 19
+"d:\sem 5\project\E_ticket_system\backend\controllers\authCheckerController.js", "JavaScript", 0, 0, 15, 0, 0, 1, 3, 19
+"d:\sem 5\project\E_ticket_system\backend\controllers\busController.js", "JavaScript", 0, 0, 131, 0, 0, 8, 19, 158
+"d:\sem 5\project\E_ticket_system\backend\controllers\getAllCitiesController.js", "JavaScript", 0, 0, 21, 0, 0, 0, 3, 24
+"d:\sem 5\project\E_ticket_system\backend\controllers\searchController.js", "JavaScript", 0, 0, 50, 0, 0, 0, 11, 61
+"d:\sem 5\project\E_ticket_system\backend\jobs\DailyJob.js", "JavaScript", 0, 0, 65, 0, 0, 1, 7, 73
+"d:\sem 5\project\E_ticket_system\backend\middleware\errorHandle.js", "JavaScript", 0, 0, 7, 0, 0, 0, 3, 10
+"d:\sem 5\project\E_ticket_system\backend\middleware\logEvents.js", "JavaScript", 0, 0, 25, 0, 0, 1, 6, 32
+"d:\sem 5\project\E_ticket_system\backend\model\Admin.js", "JavaScript", 0, 0, 12, 0, 0, 0, 3, 15
+"d:\sem 5\project\E_ticket_system\backend\model\Bus.js", "JavaScript", 0, 0, 92, 0, 0, 0, 5, 97
+"d:\sem 5\project\E_ticket_system\backend\model\Checker.js", "JavaScript", 0, 0, 12, 0, 0, 0, 3, 15
+"d:\sem 5\project\E_ticket_system\backend\package-lock.json", "JSON", 0, 0, 0, 1989, 0, 0, 1, 1990
+"d:\sem 5\project\E_ticket_system\backend\package.json", "JSON", 0, 0, 0, 30, 0, 0, 1, 31
+"d:\sem 5\project\E_ticket_system\backend\public\css\stye.css", "CSS", 0, 0, 0, 0, 13, 0, 2, 15
+"d:\sem 5\project\E_ticket_system\backend\routes\api\getAllCities.js", "JavaScript", 0, 0, 5, 0, 0, 0, 4, 9
+"d:\sem 5\project\E_ticket_system\backend\routes\authAdmin.js", "JavaScript", 0, 0, 5, 0, 0, 0, 3, 8
+"d:\sem 5\project\E_ticket_system\backend\routes\authChecker.js", "JavaScript", 0, 0, 5, 0, 0, 0, 3, 8
+"d:\sem 5\project\E_ticket_system\backend\routes\bus.js", "JavaScript", 0, 0, 36, 0, 0, 0, 5, 41
+"d:\sem 5\project\E_ticket_system\backend\routes\root.js", "JavaScript", 0, 0, 7, 0, 0, 0, 3, 10
+"d:\sem 5\project\E_ticket_system\backend\routes\search.js", "JavaScript", 0, 0, 5, 0, 0, 0, 4, 9
+"d:\sem 5\project\E_ticket_system\backend\server.js", "JavaScript", 0, 0, 42, 0, 0, 1, 8, 51
+"d:\sem 5\project\E_ticket_system\backend\utils\normalTicketPrices.js", "JavaScript", 0, 0, 353, 0, 0, 0, 2, 355
+"d:\sem 5\project\E_ticket_system\backend\utils\weekdayOrWeekendFinder.js", "JavaScript", 0, 0, 13, 0, 0, 0, 3, 16
+"d:\sem 5\project\E_ticket_system\backend\views\404.html", "HTML", 0, 13, 0, 0, 0, 0, 2, 15
+"d:\sem 5\project\E_ticket_system\backend\views\index.html", "HTML", 0, 13, 0, 0, 0, 0, 2, 15
+"Total", "-", 3, 26, 939, 2019, 13, 13, 118, 3131

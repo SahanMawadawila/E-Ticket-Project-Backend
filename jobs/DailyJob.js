@@ -2,8 +2,8 @@ const cron = require("node-cron");
 const Bus = require("../model/Bus");
 const asyncHandler = require("express-async-handler");
 const dayjs = require("dayjs");
+const weekdayOrWeekendFinder = require("../utils/weekdayOrWeekendFinder");
 
-const date = dayjs().add(3, "day").format("YYYY-MM-DD");
 const bookingOpen = asyncHandler(async (req, res) => {
   const buses = await Bus.find();
   if (!buses) {
@@ -13,11 +13,6 @@ const bookingOpen = asyncHandler(async (req, res) => {
     return;
   }
 
-  const newObject = {
-    date,
-    booked: [],
-  };
-
   //going through each bus we found above and use that details to update the new bus using bulkWrite method
   const operations = buses.map((bus) => ({
     updateOne: {
@@ -26,24 +21,32 @@ const bookingOpen = asyncHandler(async (req, res) => {
         $set: {
           seats: bus.seats.map((seat) => {
             if (seat.isBookable) {
-              if (seat.availability.length === 5) {
-                const deleteDate = dayjs.add(-2, "day").format("YYYY-MM-DD");
-                seat.availability = seat.availability.filter(
-                  (obj) => obj.date !== deleteDate
-                );
-                seat.availability = [...seat.availability, newObject];
-              } else {
-                let found = false;
-                for (let obj of seat.availability) {
-                  if (obj.date === date) {
-                    found = true;
-                    break;
-                  }
-                }
-                if (!found) {
-                  seat.availability = [...seat.availability, newObject];
+              for (let i = 0; i < 4; i++) {
+                if (
+                  bus.selectedDays[
+                    weekdayOrWeekendFinder(dayjs().add(i, "day"))
+                  ] === true &&
+                  seat.availability.find(
+                    (obj) =>
+                      obj.date === dayjs().add(i, "day").format("YYYY-MM-DD")
+                  ) === undefined
+                ) {
+                  seat.availability.push({
+                    date: dayjs().add(i, "day").format("YYYY-MM-DD"),
+                    booked: seat.availability[0].booked.map((obj) => {
+                      return {
+                        city: obj.city,
+                        take: false,
+                      };
+                    }),
+                  });
                 }
               }
+
+              //remove objects that happen before 2 days to the current date ( others will be removed)
+              seat.availability = seat.availability.filter((obj) => {
+                return dayjs(obj.date).diff(dayjs(), "day") >= -2;
+              });
             }
             return seat;
           }),
@@ -56,10 +59,12 @@ const bookingOpen = asyncHandler(async (req, res) => {
 });
 
 const task1 = cron.schedule(
-  "55 13 * * *",
+  "39 06 * * *",
   () => {
     bookingOpen();
-    console.log(`Booking open for ${date}`);
+    console.log(
+      `Booking open until ${dayjs().add(3, "day").format("YYYY-MM-DD")}`
+    );
   },
   {
     scheduled: false,

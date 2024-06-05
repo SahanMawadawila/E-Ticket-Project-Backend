@@ -28,6 +28,7 @@ app.use("/auth/admin", require("./routes/authAdmin"));
 app.use("/bus", require("./routes/bus"));
 app.use("/cities", require("./routes/api/getAllCities"));
 app.use("/search", require("./routes/search"));
+app.use("/booking", require("./routes/booking"));
 
 app.all("*", (req, res) => {
   res.status(404);

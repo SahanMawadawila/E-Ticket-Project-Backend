@@ -69,11 +69,14 @@ const busSchema = new mongoose.Schema({
       isBookable: Boolean,
       availability: [
         {
-          date: Date,
+          date: String, //otherwise it will be saved as Date format
           booked: [
             {
-              from: String,
-              to: String,
+              city: String,
+              take: {
+                type: Boolean,
+                default: false,
+              },
             },
           ],
         },
@@ -90,6 +93,10 @@ const busSchema = new mongoose.Schema({
     weekDays: Boolean,
     sunday: Boolean,
     saturday: Boolean,
+  },
+  minHalts: {
+    type: Number,
+    required: true,
   },
 });
 

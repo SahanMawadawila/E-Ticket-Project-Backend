@@ -351,4 +351,4 @@ const priceByNoOfHalts = {
   350: 2388,
 };
 
-export default priceByNoOfHalts;
+module.exports = priceByNoOfHalts;
