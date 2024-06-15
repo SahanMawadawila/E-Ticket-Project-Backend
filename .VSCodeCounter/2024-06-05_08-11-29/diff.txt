@@ -1,0 +1,40 @@
+Date : 2024-06-05 08:11:29
+Directory : d:\sem 5\project\E_ticket_system\backend
+Total : 10 files,  226 codes, 18 comments, 20 blanks, all 264 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         10 |        226 |         18 |         20 |        264 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                      | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                         |         10 |        226 |         18 |         20 |        264 |
+| . (Files)                                                                 |          1 |          1 |          0 |          0 |          1 |
+| controllers                                                               |          3 |        184 |         17 |         13 |        214 |
+| jobs                                                                      |          1 |          4 |          1 |          0 |          5 |
+| model                                                                     |          2 |         32 |          0 |          3 |         35 |
+| routes                                                                    |          1 |          5 |          0 |          4 |          9 |
+| utils                                                                     |          2 |          0 |          0 |          0 |          0 |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                  | language   | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\sem 5\project\E_ticket_system\backend\controllers\bookingController.js | JavaScript |         90 |          4 |          5 |         99 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\busController.js     | JavaScript |          3 |          0 |          1 |          4 |
+| d:\sem 5\project\E_ticket_system\backend\controllers\searchController.js  | JavaScript |         91 |         13 |          7 |        111 |
+| d:\sem 5\project\E_ticket_system\backend\jobs\DailyJob.js                 | JavaScript |          4 |          1 |          0 |          5 |
+| d:\sem 5\project\E_ticket_system\backend\model\Booking.js                 | JavaScript |         25 |          0 |          3 |         28 |
+| d:\sem 5\project\E_ticket_system\backend\model\Bus.js                     | JavaScript |          7 |          0 |          0 |          7 |
+| d:\sem 5\project\E_ticket_system\backend\routes\booking.js                | JavaScript |          5 |          0 |          4 |          9 |
+| d:\sem 5\project\E_ticket_system\backend\server.js                        | JavaScript |          1 |          0 |          0 |          1 |
+| d:\sem 5\project\E_ticket_system\backend\utils\normalTicketPrices.js      | JavaScript |       -353 |          0 |         -2 |       -355 |
+| d:\sem 5\project\E_ticket_system\backend\utils\priceByNoOfHalts.js        | JavaScript |        353 |          0 |          2 |        355 |
+| Total                                                                     |            |        226 |         18 |         20 |        264 |
++---------------------------------------------------------------------------+------------+------------+------------+------------+------------+

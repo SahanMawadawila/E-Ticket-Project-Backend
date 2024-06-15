@@ -59,7 +59,7 @@ const bookingOpen = asyncHandler(async (req, res) => {
 });
 
 const task1 = cron.schedule(
-  "39 06 * * *",
+  "14 18 * * *",
   () => {
     bookingOpen();
     console.log(

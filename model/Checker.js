@@ -1,13 +1,22 @@
 const mongoose = require("mongoose");
 
 const checkerSchema = new mongoose.Schema({
-  username: {
+  name: {
     type: String,
     required: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  email: {
+    type: String,
+  },
+  companyName: {
+    type: String,
+  },
+  telephone: {
+    type: String,
   },
 });
 
