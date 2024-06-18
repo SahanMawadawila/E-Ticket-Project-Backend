@@ -82,14 +82,12 @@ const addBooking = asyncHandler(async (req, res) => {
       break;
     }
   }
-  //pdfprt..
-  const randomNumber = Math.floor(Math.random() * 100000000); // Example random number
+  //pdf part start..
+  const randomNumber = Math.floor(Math.random() * 100000000); // random number
   console.log(`QR code data: ${randomNumber}`);
 
-  // Step 2: Generate QR code and PDF
   generateQRCodeAndPDF(id,email,from,to,departureTime,arrivalTime,date,numberPlate,routeNumber,price)
     .then(() => {
-      // Step 3: Send email with PDF attachment
       return sendEmailWithAttachment(email);
     })
     .then(() => {

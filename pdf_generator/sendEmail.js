@@ -1,4 +1,3 @@
-// sendEmail.js
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 
@@ -22,7 +21,7 @@ function sendEmailWithAttachment(email) {
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: email, // Use the test account's email address for both sender and recipient
+        to: email, 
         subject: 'PDF with QR Code',
         text: 'Hello,\n\nYou have successfully completed your booking. Please find the PDF with QR code attached.',
         attachments: [
