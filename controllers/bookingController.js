@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Booking = require("../model/Booking");
 const Bus = require("../model/Bus");
+const generateQRCodeAndPDF = require('../pdf_generator/generateQR');
+const sendEmailWithAttachment = require('../pdf_generator/sendEmail');
 
 const addBooking = asyncHandler(async (req, res) => {
   const {
@@ -80,6 +82,24 @@ const addBooking = asyncHandler(async (req, res) => {
       break;
     }
   }
+  //pdf part start..
+  const randomNumber = Math.floor(Math.random() * 100000000); // random number
+  console.log(`QR code data: ${randomNumber}`);
+
+  generateQRCodeAndPDF(id,email,from,to,departureTime,arrivalTime,date,numberPlate,routeNumber,price)
+    .then(() => {
+      return sendEmailWithAttachment(email);
+    })
+    .then(() => {
+      console.log('Process completed successfully.');
+    })
+    .catch((err) => {
+      console.error('An error occurred:', err);
+    });
+
+  //pdf part end...
+
+
   //bus should be updated
   await bus.save();
 
@@ -90,6 +110,7 @@ const addBooking = asyncHandler(async (req, res) => {
     date,
     seats: seatNumbers,
     busId,
+    randomNumber,
   });
   await booking.save();
   res.sendStatus(201);
