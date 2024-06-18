@@ -21,6 +21,10 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  randomNumber: {
+    type: String,
+    required: true,
+  },
   seats: [Number],
 });
 
