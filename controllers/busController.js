@@ -1,6 +1,6 @@
 const Bus = require("../model/Bus");
 const asyncHandler = require("express-async-handler");
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 const dayjs = require("dayjs");
 const weekdayOrWeekendFinder = require("../utils/weekdayOrWeekendFinder");
 
@@ -143,13 +143,12 @@ const deleteBus = asyncHandler(async (req, res) => {
   if (!bus) {
     return res.sendStatus(404);
   }
-  res.json({ message: "Bus deleted successfully" });
 
   //delete images
-  imageURLS.imagesURLs.forEach((image) => {
-    fs.unlinkSync(`uploads/${image}`);
-    console.log(`uploads/${image} deleted successfully`);
+  imageURLS.imagesURLs.map(async (url) => {
+    await fsPromises.unlink(`./uploads/busses/${url}`);
   });
+  res.json({ message: "Bus deleted successfully" });
 });
 
 //get bus by route

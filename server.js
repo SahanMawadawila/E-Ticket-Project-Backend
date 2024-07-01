@@ -21,6 +21,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/bus", express.static(path.join(__dirname, "uploads")));
+app.use("/checkerDP", express.static(path.join(__dirname, "uploads")));
 
 app.use("/", require("./routes/root"));
 app.use("/auth/checker", require("./routes/authChecker"));

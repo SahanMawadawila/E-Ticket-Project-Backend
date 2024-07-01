@@ -1,6 +1,7 @@
 const Checker = require("../model/Checker");
 const asyncHandler = require("express-async-handler");
 const bycrypt = require("bcrypt");
+const fsPromises = require("fs").promises;
 
 const getCheckers = asyncHandler(async (req, res) => {
   const checkers = await Checker.find().select("-password").lean();
@@ -37,6 +38,7 @@ const addChecker = asyncHandler(async (req, res) => {
     password: hashedPassword,
     telephone,
     companyName,
+    url: req.file.filename,
   });
 
   await checker.save();
@@ -47,12 +49,14 @@ const addChecker = asyncHandler(async (req, res) => {
 //delete a checker
 const deleteChecker = asyncHandler(async (req, res) => {
   const { id } = req.params;
-
   if (!id) {
     res.sendStatus(400);
   }
+  const checkerUrl = await Checker.findById(id).select("url");
 
   await Checker.findByIdAndDelete(id);
+
+  await fsPromises.unlink(`./uploads/checkers/${checkerUrl.url}`);
 
   res.sendStatus(200);
 });

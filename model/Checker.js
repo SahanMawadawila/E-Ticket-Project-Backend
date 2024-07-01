@@ -18,6 +18,9 @@ const checkerSchema = new mongoose.Schema({
   telephone: {
     type: String,
   },
+  url: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Checker", checkerSchema);
