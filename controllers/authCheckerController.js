@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const handleLogin = async (req, res) => {
   const { user, pwd } = req.body;
   if (!user || !pwd) return res.sendStatus(400);
-  const foundUser = await Checker.findOne({ username: user }).exec();
+  const foundUser = await Checker.findOne({ name: user }).exec();
   if (!foundUser) return res.sendStatus(401); //Unauthorized
   // evaluate password
   const match = await bcrypt.compare(pwd, foundUser.password);
