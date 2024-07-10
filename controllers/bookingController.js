@@ -142,9 +142,35 @@ const addBooking = asyncHandler(async (req, res) => {
       busDepartureTime <= departureTime
         ? date
         : dayjs(date).subtract(1, "day").format("YYYY-MM-DD"),
+    from,
+    to,
+    departureTime,
+    arrivalTime,
+    arrivalDate,
   });
   await booking.save();
   res.sendStatus(201);
 });
 
-module.exports = addBooking;
+const getAllBookings = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const today = dayjs().format("YYYY-MM-DD");
+
+  const bookings = await Booking.find({ busId: id, mappedDate: today })
+    .select(
+      "_id id date seats from to departureTime arrivalTime arrivalDate isChecked"
+    )
+    .lean();
+
+  console.log(bookings);
+  if (!bookings) {
+    return res.sendStatus(404);
+  }
+  if (!bookings.length) {
+    return res.sendStatus(204);
+  }
+  console.log(bookings);
+  res.json(bookings);
+});
+
+module.exports = { addBooking, getAllBookings };

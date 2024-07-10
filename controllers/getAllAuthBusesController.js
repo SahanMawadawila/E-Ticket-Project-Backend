@@ -37,7 +37,7 @@ const getAllAuthBusesController = asyncHandler(async (req, res) => {
   //console.log(busesWithTodayBookings);
   const busesWithTodayBookingsAndDetails = [];
   for (let i = 0; i < busesWithTodayBookings.length; i++) {
-    const bus = busesWithTodayBookings[i].toObject();
+    const bus = busesWithTodayBookings[i];
     const bookings = await Booking.find({ busId: bus._id, mappedDate: today });
     bus.noOfBookings = bookings.length;
     if (bookings.length !== 0) {

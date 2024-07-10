@@ -34,6 +34,26 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  from: {
+    type: String,
+    required: true,
+  },
+  to: {
+    type: String,
+    required: true,
+  },
+  departureTime: {
+    type: String,
+    required: true,
+  },
+  arrivalTime: {
+    type: String,
+    required: true,
+  },
+  arrivalDate: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
