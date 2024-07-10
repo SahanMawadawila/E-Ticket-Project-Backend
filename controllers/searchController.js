@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 
 const priceByNoOfHalts = require("../utils/priceByNoOfHalts");
 const dayjs = require("dayjs");
-
+const convertTimeToFloat = require("../utils/convertTimeToFloat");
 const search = asyncHandler(async (req, res) => {
   const { from, to, date, isToday } = req.body;
   if (!from || !to || !date)
@@ -43,8 +43,8 @@ const search = asyncHandler(async (req, res) => {
   //sorting the busesArray by arrivalTime
   let sortedArray = busesArray.sort(
     (a, b) =>
-      parseFloat(a.route.find((obj) => obj.city === from).arrivalTime) -
-      parseFloat(b.route.find((obj) => obj.city === from).arrivalTime)
+      convertTimeToFloat(a.route.find((obj) => obj.city === from).arrivalTime) -
+      convertTimeToFloat(b.route.find((obj) => obj.city === from).arrivalTime)
   );
 
   //setting the searchedDepartureTime, searchedArrivalTime, thisBusPrice, actualPrice
@@ -80,15 +80,15 @@ const search = asyncHandler(async (req, res) => {
   if (isToday) {
     sortedArray = sortedArray.filter((bus) => {
       return (
-        parseFloat(bus.searchedDepartureTime) >=
-        parseFloat(bus.busFrom.departureTime)
+        convertTimeToFloat(bus.searchedDepartureTime) >=
+        convertTimeToFloat(bus.busFrom.departureTime)
       );
     });
   } else {
     sortedArray = sortedArray.filter((bus) => {
       return (
-        parseFloat(bus.searchedDepartureTime) <=
-        parseFloat(bus.busFrom.departureTime)
+        convertTimeToFloat(bus.searchedDepartureTime) <=
+        convertTimeToFloat(bus.busFrom.departureTime)
       );
     });
   }
