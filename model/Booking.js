@@ -26,6 +26,14 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
   seats: [Number],
+  isChecked: {
+    type: Boolean,
+    default: false,
+  },
+  mappedDate: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

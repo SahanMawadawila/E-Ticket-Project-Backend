@@ -5,7 +5,7 @@ const priceByNoOfHalts = require("../utils/priceByNoOfHalts");
 const dayjs = require("dayjs");
 
 const search = asyncHandler(async (req, res) => {
-  const { from, to, date } = req.body;
+  const { from, to, date, isToday } = req.body;
   if (!from || !to || !date)
     return res.status(400).json({ message: "Missing fields" });
 
@@ -41,7 +41,7 @@ const search = asyncHandler(async (req, res) => {
   if (!busesArray.length) return res.sendStatus(204);
 
   //sorting the busesArray by arrivalTime
-  const sortedArray = busesArray.sort(
+  let sortedArray = busesArray.sort(
     (a, b) =>
       parseFloat(a.route.find((obj) => obj.city === from).arrivalTime) -
       parseFloat(b.route.find((obj) => obj.city === from).arrivalTime)
@@ -74,6 +74,23 @@ const search = asyncHandler(async (req, res) => {
       }
     });
     sortedArray[i] = bus;
+  }
+
+  //remove busses which has lower searchedDepartureTime than busFrom.departureTime
+  if (isToday) {
+    sortedArray = sortedArray.filter((bus) => {
+      return (
+        parseFloat(bus.searchedDepartureTime) >=
+        parseFloat(bus.busFrom.departureTime)
+      );
+    });
+  } else {
+    sortedArray = sortedArray.filter((bus) => {
+      return (
+        parseFloat(bus.searchedDepartureTime) <=
+        parseFloat(bus.busFrom.departureTime)
+      );
+    });
   }
 
   let arrayOfBussesAfterAvailableSeatsChecking = [];

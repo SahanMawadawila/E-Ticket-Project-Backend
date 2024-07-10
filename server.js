@@ -32,6 +32,7 @@ app.use("/search", require("./routes/search"));
 app.use("/booking", require("./routes/booking"));
 app.use("/companies", require("./routes/api/getAllBusComapnies"));
 app.use("/checkers", require("./routes/checker"));
+app.use("/authBuses", require("./routes/api/getAuthBuses"));
 
 app.all("*", (req, res) => {
   res.status(404);

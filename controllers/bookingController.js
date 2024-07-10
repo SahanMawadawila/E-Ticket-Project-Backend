@@ -3,6 +3,9 @@ const Booking = require("../model/Booking");
 const Bus = require("../model/Bus");
 const generateQRCodeAndPDF = require("../utils/generateQR");
 const sendEmailWithAttachment = require("../utils/sendEmail");
+const { search } = require("./searchController");
+const dayjs = require("dayjs");
+const convertTimeToFloat = require("../utils/convertTimeToFloat");
 
 const addBooking = asyncHandler(async (req, res) => {
   const {
@@ -24,6 +27,7 @@ const addBooking = asyncHandler(async (req, res) => {
     busFrom,
     busTo,
     price,
+    busDepartureTime,
   } = req.body;
   if (
     !id ||
@@ -43,7 +47,8 @@ const addBooking = asyncHandler(async (req, res) => {
     !duration ||
     !busFrom ||
     !busTo ||
-    !price
+    !price ||
+    !busDepartureTime
   ) {
     return res.sendStatus(400);
   }
@@ -61,7 +66,19 @@ const addBooking = asyncHandler(async (req, res) => {
   for (let i = 0; i < seatsObjectArray.length; i++) {
     const seatObj = seatsObjectArray[i]; //take one seat
     //object inside availability where date is equal to date
-    const availability = seatObj.availability.find((obj) => obj.date === date);
+
+    let availability = {};
+    if (
+      convertTimeToFloat(busDepartureTime) <= convertTimeToFloat(departureTime)
+    ) {
+      availability = seatObj.availability.find((obj) => obj.date === date);
+    } else {
+      availability = seatObj.availability.find(
+        (obj) =>
+          obj.date === dayjs(date).subtract(1, "day").format("YYYY-MM-DD")
+      );
+    }
+
     console.log(availability); //availability is a object
     if (!availability) {
       return res.sendStatus(400);
@@ -121,6 +138,10 @@ const addBooking = asyncHandler(async (req, res) => {
     seats: seatNumbers,
     busId,
     randomNumber,
+    mappedDate:
+      busDepartureTime <= departureTime
+        ? date
+        : dayjs(date).subtract(1, "day").format("YYYY-MM-DD"),
   });
   await booking.save();
   res.sendStatus(201);

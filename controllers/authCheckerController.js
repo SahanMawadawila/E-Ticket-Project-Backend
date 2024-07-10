@@ -9,7 +9,10 @@ const handleLogin = async (req, res) => {
   // evaluate password
   const match = await bcrypt.compare(pwd, foundUser.password);
   if (match) {
-    res.json({ message: "Login successful", user: foundUser.username });
+    res.json({
+      message: "Login successful",
+      company: foundUser.companyName,
+    });
   } else {
     res.sendStatus(401);
   }
