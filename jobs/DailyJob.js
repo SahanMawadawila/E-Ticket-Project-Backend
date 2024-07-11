@@ -3,8 +3,9 @@ const Bus = require("../model/Bus");
 const asyncHandler = require("express-async-handler");
 const dayjs = require("dayjs");
 const weekdayOrWeekendFinder = require("../utils/weekdayOrWeekendFinder");
+const Booking = require("../model/Booking");
 
-const bookingOpen = asyncHandler(async (req, res) => {
+const bookingOpen = asyncHandler(async () => {
   const buses = await Bus.find();
   if (!buses) {
     return;
@@ -58,10 +59,18 @@ const bookingOpen = asyncHandler(async (req, res) => {
   await Bus.bulkWrite(operations);
 });
 
+//delete the booking after 3 days
+const deleteBooking = asyncHandler(async () => {
+  const threeDaysAgo = dayjs().subtract(3, "day").format("YYYY-MM-DD");
+  await Booking.deleteMany({ mappedDate: threeDaysAgo });
+  console.log(`Deleted all bookings before ${threeDaysAgo}`);
+});
+
 const task1 = cron.schedule(
   "14 18 * * *",
   () => {
     bookingOpen();
+    deleteBooking();
     console.log(
       `Booking open until ${dayjs().add(3, "day").format("YYYY-MM-DD")}`
     );
