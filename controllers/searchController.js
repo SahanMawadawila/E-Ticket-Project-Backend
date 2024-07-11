@@ -6,11 +6,21 @@ const dayjs = require("dayjs");
 const convertTimeToFloat = require("../utils/convertTimeToFloat");
 const search = asyncHandler(async (req, res) => {
   const { from, to, date, isToday } = req.body;
+
   if (!from || !to || !date)
     return res.status(400).json({ message: "Missing fields" });
 
   if (from === to)
     return res.status(400).json({ message: "From and To cannot be the same" });
+
+  //if the date is yesterday then return empty array because buses are started its journey
+  if (
+    !isToday &&
+    dayjs(date).format("YYYY-MM-DD") ===
+      dayjs().subtract(1, "day").format("YYYY-MM-DD")
+  ) {
+    return res.json([]);
+  }
 
   const buses = await Bus.find();
   if (!buses) return res.sendStatus(404);
@@ -46,6 +56,20 @@ const search = asyncHandler(async (req, res) => {
       convertTimeToFloat(a.route.find((obj) => obj.city === from).arrivalTime) -
       convertTimeToFloat(b.route.find((obj) => obj.city === from).arrivalTime)
   );
+
+  //remover busses when user search for today and bus has already started its journey
+  if (
+    dayjs(date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD") &&
+    isToday
+  ) {
+    console.log("today");
+    sortedArray = sortedArray.filter((bus) => {
+      return (
+        convertTimeToFloat(bus.busFrom.departureTime) >=
+        convertTimeToFloat(dayjs().format("HH:mm"))
+      );
+    });
+  }
 
   //setting the searchedDepartureTime, searchedArrivalTime, thisBusPrice, actualPrice
   for (let i = 0; i < sortedArray.length; i++) {
@@ -87,11 +111,12 @@ const search = asyncHandler(async (req, res) => {
   } else {
     sortedArray = sortedArray.filter((bus) => {
       return (
-        convertTimeToFloat(bus.searchedDepartureTime) <=
+        convertTimeToFloat(bus.searchedDepartureTime) <
         convertTimeToFloat(bus.busFrom.departureTime)
       );
     });
   }
+  if (!sortedArray.length) return res.sendStatus(204);
 
   let arrayOfBussesAfterAvailableSeatsChecking = [];
   //finding no of seats available and give property to each seat as availabilityBoolean
