@@ -104,7 +104,7 @@ const addBooking = asyncHandler(async (req, res) => {
   console.log(`QR code data: ${randomNumber}`);
 
   generateQRCodeAndPDF(
-    id,
+    randomNumber,
     email,
     from,
     to,
@@ -173,4 +173,26 @@ const getAllBookings = asyncHandler(async (req, res) => {
   res.json(bookings);
 });
 
-module.exports = { addBooking, getAllBookings };
+const updateBooking = asyncHandler(async (req, res) => {
+  const busId = req.params.id;
+  //console.log(busId);
+  const bookingId = req.body.bookingId;
+  //console.log(bookingId);
+  const booking = await Booking.findOne({ randomNumber: bookingId, busId });
+
+  //console.log(booking);
+  if (!booking) {
+    return res.status(404).json({ message: "Booking not found" });
+  }
+
+  if (booking.isChecked) {
+    return res.status(400).json({ message: "Already checked" });
+  }
+
+  booking.isChecked = true;
+  await booking.save();
+  console.log(booking._id);
+  res.json({ bookingId: booking._id });
+});
+
+module.exports = { addBooking, getAllBookings, updateBooking };
