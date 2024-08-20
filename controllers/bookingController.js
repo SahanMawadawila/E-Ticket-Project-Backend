@@ -1,12 +1,90 @@
 const asyncHandler = require("express-async-handler");
 const Booking = require("../model/Booking");
 const Bus = require("../model/Bus");
+<<<<<<< Updated upstream
+const generateQRCodeAndPDF = require('../pdf_generator/generateQR');
+const sendEmailWithAttachment = require('../pdf_generator/sendEmail');
+=======
 const generateQRCodeAndPDF = require("../utils/generateQR");
 const sendEmailWithAttachment = require("../utils/sendEmail");
 const { search } = require("./searchController");
 const dayjs = require("dayjs");
 const convertTimeToFloat = require("../utils/convertTimeToFloat");
-const { read } = require("pdfkit");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+let globalVars = {
+  id: null,
+  email: null,
+  phone: null,
+  date: null,
+  seats: null,
+  busId: null,
+  departureTime: null,
+  arrivalTime: null,
+  arrivalDate: null,
+  numberPlate: null,
+  routeNumber: null,
+  from: null,
+  to: null,
+  busName: null,
+  duration: null,
+  busFrom: null,
+  busTo: null,
+  price: null,
+  busDepartureTime: null,
+};
+
+const updateGlobalVars = (data) => {
+  globalVars = { ...globalVars, ...data };
+};
+
+
+const makePayment = asyncHandler(async (req, res) => {
+  updateGlobalVars(req.body);
+  const {
+    id,
+    email,
+    phone,
+    date,
+    seats,
+    busId,
+    departureTime,
+    arrivalTime,
+    arrivalDate,
+    numberPlate,
+    routeNumber,
+    from,
+    to,
+    busName,
+    duration,
+    busFrom,
+    busTo,
+    price,
+    busDepartureTime,
+  } = globalVars;
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+        {
+            price_data: {
+                currency: 'lkr',
+                product_data: {
+                    name:  "ESeats.lk Travel Pass"
+                },
+                unit_amount: price*100
+            },
+            quantity: 1
+        }
+    ],
+
+    mode: 'payment',
+    success_url: 'http://localhost:5173/payment-success',
+    cancel_url: 'http://localhost:5173/',
+  })
+  res.json({id:session.id});
+});
+
+
+>>>>>>> Stashed changes
 
 const addBooking = asyncHandler(async (req, res) => {
   const {
@@ -30,6 +108,11 @@ const addBooking = asyncHandler(async (req, res) => {
     price,
     busDepartureTime,
   } = req.body;
+=======
+    busDepartureTime,
+  } = globalVars;
+  
+>>>>>>> Stashed changes
   if (
     !id ||
     !email ||
@@ -104,18 +187,26 @@ const addBooking = asyncHandler(async (req, res) => {
   const randomNumber = Math.floor(Math.random() * 100000000); // random number
   console.log(`QR code data: ${randomNumber}`);
 
+<<<<<<< Updated upstream
+  generateQRCodeAndPDF(id,email,from,to,departureTime,arrivalTime,date,numberPlate,routeNumber,price)
+=======
   generateQRCodeAndPDF(
+    id,
+    phone,
     randomNumber,
     email,
     from,
     to,
     departureTime,
     arrivalTime,
+    arrivalDate,
     date,
     numberPlate,
     routeNumber,
-    price
+    price,
+    seats
   )
+>>>>>>> Stashed changes
     .then(() => {
       return sendEmailWithAttachment(email);
     })
@@ -271,4 +362,5 @@ module.exports = {
   getAllBookingsAdmin,
   freezeBooking,
   getFreezedDays,
+  makePayment,
 };

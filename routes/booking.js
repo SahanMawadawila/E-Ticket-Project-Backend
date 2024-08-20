@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  addBooking,
+  makePayment,
   getAllBookings,
   updateBooking,
   getAllBookingsAdmin,
@@ -10,7 +10,7 @@ const {
   getFreezedDays,
 } = require("../controllers/bookingController");
 
-router.post("/", addBooking);
+router.post("/", makePayment);
 router.get("/:id", getAllBookings);
 router.get("/admin/:id", getAllBookingsAdmin);
 router.post("/freeze/:id", freezeBooking);

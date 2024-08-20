@@ -30,6 +30,7 @@ app.use("/bus", require("./routes/bus"));
 app.use("/cities", require("./routes/api/getAllCities"));
 app.use("/search", require("./routes/search"));
 app.use("/booking", require("./routes/booking"));
+app.use("/completebooking", require("./routes/bookingcomplete"));
 app.use("/companies", require("./routes/api/getAllBusComapnies"));
 app.use("/checkers", require("./routes/checker"));
 app.use("/authBuses", require("./routes/api/getAuthBuses"));
