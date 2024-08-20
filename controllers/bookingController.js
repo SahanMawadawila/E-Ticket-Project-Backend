@@ -36,27 +36,7 @@ const updateGlobalVars = (data) => {
 
 const makePayment = asyncHandler(async (req, res) => {
   updateGlobalVars(req.body);
-  const {
-    id,
-    email,
-    phone,
-    date,
-    seats,
-    busId,
-    departureTime,
-    arrivalTime,
-    arrivalDate,
-    numberPlate,
-    routeNumber,
-    from,
-    to,
-    busName,
-    duration,
-    busFrom,
-    busTo,
-    price,
-    busDepartureTime,
-  } = globalVars;
+  const { price } = globalVars;
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -99,7 +79,7 @@ const addBooking = asyncHandler(async (req, res) => {
     busTo,
     price,
     busDepartureTime,
-  } = req.body;
+  } = globalVars;
   if (
     !id ||
     !email ||
@@ -118,8 +98,7 @@ const addBooking = asyncHandler(async (req, res) => {
     !duration ||
     !busFrom ||
     !busTo ||
-    !price ||
-    !busDepartureTime
+    !price
   ) {
     return res.sendStatus(400);
   }
@@ -285,7 +264,7 @@ const getAllBookingsAdmin = asyncHandler(async (req, res) => {
 const freezeBooking = asyncHandler(async (req, res) => {
   const busId = req.params.id;
   const date = req.body.date;
-
+  //hello
   console.log(busId, date);
   const bus = await Bus.findById(busId);
   if (!bus) {
