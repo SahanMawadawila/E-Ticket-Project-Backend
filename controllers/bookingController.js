@@ -1,8 +1,90 @@
 const asyncHandler = require("express-async-handler");
 const Booking = require("../model/Booking");
 const Bus = require("../model/Bus");
+<<<<<<< Updated upstream
 const generateQRCodeAndPDF = require('../pdf_generator/generateQR');
 const sendEmailWithAttachment = require('../pdf_generator/sendEmail');
+=======
+const generateQRCodeAndPDF = require("../utils/generateQR");
+const sendEmailWithAttachment = require("../utils/sendEmail");
+const { search } = require("./searchController");
+const dayjs = require("dayjs");
+const convertTimeToFloat = require("../utils/convertTimeToFloat");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+let globalVars = {
+  id: null,
+  email: null,
+  phone: null,
+  date: null,
+  seats: null,
+  busId: null,
+  departureTime: null,
+  arrivalTime: null,
+  arrivalDate: null,
+  numberPlate: null,
+  routeNumber: null,
+  from: null,
+  to: null,
+  busName: null,
+  duration: null,
+  busFrom: null,
+  busTo: null,
+  price: null,
+  busDepartureTime: null,
+};
+
+const updateGlobalVars = (data) => {
+  globalVars = { ...globalVars, ...data };
+};
+
+
+const makePayment = asyncHandler(async (req, res) => {
+  updateGlobalVars(req.body);
+  const {
+    id,
+    email,
+    phone,
+    date,
+    seats,
+    busId,
+    departureTime,
+    arrivalTime,
+    arrivalDate,
+    numberPlate,
+    routeNumber,
+    from,
+    to,
+    busName,
+    duration,
+    busFrom,
+    busTo,
+    price,
+    busDepartureTime,
+  } = globalVars;
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+        {
+            price_data: {
+                currency: 'lkr',
+                product_data: {
+                    name:  "ESeats.lk Travel Pass"
+                },
+                unit_amount: price*100
+            },
+            quantity: 1
+        }
+    ],
+
+    mode: 'payment',
+    success_url: 'http://localhost:5173/payment-success',
+    cancel_url: 'http://localhost:5173/',
+  })
+  res.json({id:session.id});
+});
+
+
+>>>>>>> Stashed changes
 
 const addBooking = asyncHandler(async (req, res) => {
   const {
@@ -24,7 +106,13 @@ const addBooking = asyncHandler(async (req, res) => {
     busFrom,
     busTo,
     price,
+<<<<<<< Updated upstream
   } = req.body;
+=======
+    busDepartureTime,
+  } = globalVars;
+  
+>>>>>>> Stashed changes
   if (
     !id ||
     !email ||
@@ -86,7 +174,26 @@ const addBooking = asyncHandler(async (req, res) => {
   const randomNumber = Math.floor(Math.random() * 100000000); // random number
   console.log(`QR code data: ${randomNumber}`);
 
+<<<<<<< Updated upstream
   generateQRCodeAndPDF(id,email,from,to,departureTime,arrivalTime,date,numberPlate,routeNumber,price)
+=======
+  generateQRCodeAndPDF(
+    id,
+    phone,
+    randomNumber,
+    email,
+    from,
+    to,
+    departureTime,
+    arrivalTime,
+    arrivalDate,
+    date,
+    numberPlate,
+    routeNumber,
+    price,
+    seats
+  )
+>>>>>>> Stashed changes
     .then(() => {
       return sendEmailWithAttachment(email);
     })
@@ -116,4 +223,51 @@ const addBooking = asyncHandler(async (req, res) => {
   res.sendStatus(201);
 });
 
+<<<<<<< Updated upstream
 module.exports = addBooking;
+=======
+const getAllBookings = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const today = dayjs().format("YYYY-MM-DD");
+
+  const bookings = await Booking.find({ busId: id, mappedDate: today })
+    .select(
+      "_id id date seats from to departureTime arrivalTime arrivalDate isChecked"
+    )
+    .lean();
+
+  console.log(bookings);
+  if (!bookings) {
+    return res.sendStatus(404);
+  }
+  if (!bookings.length) {
+    return res.sendStatus(204);
+  }
+  console.log(bookings);
+  res.json(bookings);
+});
+
+const updateBooking = asyncHandler(async (req, res) => {
+  const busId = req.params.id;
+  //console.log(busId);
+  const bookingId = req.body.bookingId;
+  //console.log(bookingId);
+  const booking = await Booking.findOne({ randomNumber: bookingId, busId });
+
+  //console.log(booking);
+  if (!booking) {
+    return res.status(404).json({ message: "Booking not found" });
+  }
+
+  if (booking.isChecked) {
+    return res.status(400).json({ message: "Already checked" });
+  }
+
+  booking.isChecked = true;
+  await booking.save();
+  console.log(booking._id);
+  res.json({ bookingId: booking._id });
+});
+
+module.exports = { addBooking, getAllBookings, updateBooking, makePayment };
+>>>>>>> Stashed changes
