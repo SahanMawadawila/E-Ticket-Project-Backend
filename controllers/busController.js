@@ -1,4 +1,5 @@
 const Bus = require("../model/Bus");
+const Booking = require("../model/Booking");
 const asyncHandler = require("express-async-handler");
 const fsPromises = require("fs").promises;
 const dayjs = require("dayjs");
@@ -143,6 +144,9 @@ const deleteBus = asyncHandler(async (req, res) => {
   if (!bus) {
     return res.sendStatus(404);
   }
+
+  //delete bookings for the bus
+  await Booking.deleteMany({ busId: req.params.id });
 
   //delete images
   imageURLS.imagesURLs.map(async (url) => {

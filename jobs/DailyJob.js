@@ -30,7 +30,10 @@ const bookingOpen = asyncHandler(async () => {
                   seat.availability.find(
                     (obj) =>
                       obj.date === dayjs().add(i, "day").format("YYYY-MM-DD")
-                  ) === undefined
+                  ) === undefined &&
+                  !bus.freezedDays.includes(
+                    dayjs().add(i, "day").format("YYYY-MM-DD")
+                  )
                 ) {
                   seat.availability.push({
                     date: dayjs().add(i, "day").format("YYYY-MM-DD"),
@@ -66,11 +69,37 @@ const deleteBooking = asyncHandler(async () => {
   console.log(`Deleted all bookings before ${threeDaysAgo}`);
 });
 
+//delete freeze days after 3 days
+const deleteFreezeDays = asyncHandler(async () => {
+  const threeDaysAgo = dayjs().subtract(3, "day").format("YYYY-MM-DD");
+  const buses = await Bus.find();
+  if (!buses) {
+    return;
+  }
+  if (!buses.length) {
+    return;
+  }
+  const operations = buses.map((bus) => ({
+    updateOne: {
+      filter: { _id: bus._id },
+      update: {
+        $set: {
+          freezedDays: bus.freezedDays.filter((date) => {
+            return dayjs(date).diff(dayjs(), "day") >= -3;
+          }),
+        },
+      },
+    },
+  }));
+  await Bus.bulkWrite(operations);
+});
+
 const task1 = cron.schedule(
-  "14 18 * * *",
+  "19 23 * * *",
   () => {
     bookingOpen();
     deleteBooking();
+    deleteFreezeDays();
     console.log(
       `Booking open until ${dayjs().add(3, "day").format("YYYY-MM-DD")}`
     );

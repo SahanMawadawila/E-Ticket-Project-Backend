@@ -98,6 +98,13 @@ const busSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  freezedDays: [String],
+  /* tripDetails: {
+    enabled: Boolean,
+    days: [String],
+    price: Number,
+    description: String,
+  }, */
 });
 
 module.exports = mongoose.model("Bus", busSchema);

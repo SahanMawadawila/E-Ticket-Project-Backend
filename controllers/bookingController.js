@@ -6,6 +6,7 @@ const sendEmailWithAttachment = require("../utils/sendEmail");
 const { search } = require("./searchController");
 const dayjs = require("dayjs");
 const convertTimeToFloat = require("../utils/convertTimeToFloat");
+const { read } = require("pdfkit");
 
 const addBooking = asyncHandler(async (req, res) => {
   const {
@@ -195,4 +196,79 @@ const updateBooking = asyncHandler(async (req, res) => {
   res.json({ bookingId: booking._id });
 });
 
-module.exports = { addBooking, getAllBookings, updateBooking };
+const getAllBookingsAdmin = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const arrayOfBookings = [];
+  for (let i = 0; i < 4; i++) {
+    const date = dayjs().add(i, "day").format("YYYY-MM-DD");
+    const count = await Booking.countDocuments({ busId: id, mappedDate: date });
+    arrayOfBookings.push({ date, count });
+  }
+  console.log(arrayOfBookings);
+  res.json(arrayOfBookings);
+});
+
+const freezeBooking = asyncHandler(async (req, res) => {
+  const busId = req.params.id;
+  const date = req.body.date;
+
+  console.log(busId, date);
+  const bus = await Bus.findById(busId);
+  if (!bus) {
+    return res.status(404).json({ message: "Bus not found" });
+  }
+
+  const freezeArray = bus.freezedDays;
+
+  if (freezeArray.includes(date)) {
+    return res.status(400).json({ message: "Already freezed" });
+  }
+  bus.freezedDays.push(date);
+
+  await bus.save();
+
+  res.status(200).json({
+    message: `${date} is 
+    successfully freezed`,
+  });
+});
+
+const getFreezedDays = asyncHandler(async (req, res) => {
+  const busId = req.params.id;
+  const froze = [];
+
+  const bus = await Bus.findById(busId);
+  if (!bus) {
+    return res.status(404).json({ message: "Bus not found" });
+  }
+
+  const freezeArray = bus.freezedDays;
+  for (let i = 0; i < freezeArray.length; i++) {
+    froze.push({
+      date: freezeArray[i],
+      reason: "Froze",
+    });
+  }
+
+  console.log(froze);
+
+  /* const tripDaysArray = bus.tripDetails.days;
+  for (let i = 0; i < tripDaysArray.length; i++) {
+    if (!freezeArray.includes(tripDaysArray[i])) {
+      froze.push({
+        date: tripDaysArray[i],
+        reason: "Trip",
+      });
+    }
+  } */
+  res.json(froze);
+});
+
+module.exports = {
+  addBooking,
+  getAllBookings,
+  updateBooking,
+  getAllBookingsAdmin,
+  freezeBooking,
+  getFreezedDays,
+};
