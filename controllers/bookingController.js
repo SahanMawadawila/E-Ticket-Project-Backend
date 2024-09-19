@@ -7,8 +7,11 @@ const { search } = require("./searchController");
 const dayjs = require("dayjs");
 const convertTimeToFloat = require("../utils/convertTimeToFloat");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const crypto = require("crypto");
+const paymentStore = require("../db/store");
+//const { Console } = require("console");
 
-let globalVars = {
+/* let globalVars = {
   id: null,
   email: null,
   phone: null,
@@ -28,37 +31,16 @@ let globalVars = {
   busTo: null,
   price: null,
   busDepartureTime: null,
-};
+}; */
 
-const updateGlobalVars = (data) => {
-  globalVars = { ...globalVars, ...data };
+const generateRandomStringAndStoreDetails = (data) => {
+  const id = crypto.randomBytes(16).toString("hex");
+  paymentStore[id] = data;
+  return id;
 };
 
 const makePayment = asyncHandler(async (req, res) => {
-  updateGlobalVars(req.body);
-  const { price } = globalVars;
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: "lkr",
-          product_data: {
-            name: "ESeats.lk Travel Pass",
-          },
-          unit_amount: price * 100,
-        },
-        quantity: 1,
-      },
-    ],
-
-    mode: "payment",
-    success_url: "http://localhost:5173/payment-success",
-    cancel_url: "http://localhost:5173/",
-  });
-  res.json({ id: session.id });
-});
-
-const addBooking = asyncHandler(async (req, res) => {
+  const tempBookId = generateRandomStringAndStoreDetails(req.body);
   const {
     id,
     email,
@@ -79,7 +61,7 @@ const addBooking = asyncHandler(async (req, res) => {
     busTo,
     price,
     busDepartureTime,
-  } = globalVars;
+  } = req.body;
   if (
     !id ||
     !email ||
@@ -107,6 +89,52 @@ const addBooking = asyncHandler(async (req, res) => {
     return res.sendStatus(404);
   }
 
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: "lkr",
+          product_data: {
+            name: "E-Ticket by eseats.lk",
+          },
+          unit_amount: price * 100,
+        },
+        quantity: 1,
+      },
+    ],
+
+    mode: "payment",
+    success_url: "http://localhost:5173/payment-success",
+    cancel_url: "http://localhost:5173/",
+    metadata: {
+      tempBookId: tempBookId,
+    },
+  });
+
+  //console.log("TempBookId: ", tempBookId);
+  res.json({ id: session.id, tempBookId: tempBookId });
+});
+
+const addBooking = async (data, tempBookId) => {
+  const {
+    id,
+    email,
+    phone,
+    date,
+    seats,
+    busId,
+    departureTime,
+    arrivalTime,
+    arrivalDate,
+    numberPlate,
+    routeNumber,
+    from,
+    to,
+    busDepartureTime,
+    price,
+  } = data;
+
+  const bus = await Bus.findById(busId);
   const seatSplit = seats.split(",");
   const seatNumbers = seatSplit.map(Number);
   const seatsObjectArray = bus.seats.filter((seat) =>
@@ -131,7 +159,7 @@ const addBooking = asyncHandler(async (req, res) => {
 
     console.log(availability); //availability is a object
     if (!availability) {
-      return res.sendStatus(400);
+      return;
     }
     //object inside booked where city is equal to from
     for (let j = 0; j < availability.booked.length; j++) {
@@ -167,10 +195,11 @@ const addBooking = asyncHandler(async (req, res) => {
     numberPlate,
     routeNumber,
     price,
-    seats
+    seats,
+    tempBookId
   )
     .then(() => {
-      return sendEmailWithAttachment(email);
+      return sendEmailWithAttachment(email, tempBookId);
     })
     .then(() => {
       console.log("Process completed successfully.");
@@ -203,8 +232,8 @@ const addBooking = asyncHandler(async (req, res) => {
     arrivalDate,
   });
   await booking.save();
-  res.sendStatus(201);
-});
+  //res.sendStatus(201);
+};
 
 const getAllBookings = asyncHandler(async (req, res) => {
   const id = req.params.id;

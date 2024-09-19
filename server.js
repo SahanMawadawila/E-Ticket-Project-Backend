@@ -18,8 +18,24 @@ const app = express();
 connectDB();
 app.use(logger);
 app.use(cors(corsOptions));
+
+// Middleware to capture raw body
+const rawBodyMiddleware = (req, res, next) => {
+  req.rawBody = "";
+  req.on("data", (chunk) => {
+    req.rawBody += chunk;
+  });
+  req.on("end", () => {
+    next();
+  });
+};
+
+// Apply the raw body middleware to the /webhook route
+app.use("/webhook", rawBodyMiddleware, require("./routes/webhook"));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/pdf", express.static(path.join(__dirname, "pdf")));
 app.use("/bus", express.static(path.join(__dirname, "uploads")));
 app.use("/checkerDP", express.static(path.join(__dirname, "uploads")));
 
@@ -30,7 +46,7 @@ app.use("/bus", require("./routes/bus"));
 app.use("/cities", require("./routes/api/getAllCities"));
 app.use("/search", require("./routes/search"));
 app.use("/booking", require("./routes/booking"));
-app.use("/completebooking", require("./routes/bookingcomplete"));
+//app.use("/completebooking", require("./routes/bookingcomplete"));
 app.use("/companies", require("./routes/api/getAllBusComapnies"));
 app.use("/checkers", require("./routes/checker"));
 app.use("/authBuses", require("./routes/api/getAuthBuses"));

@@ -1,7 +1,7 @@
-const fs = require('fs');
-const nodemailer = require('nodemailer');
+const fs = require("fs");
+const nodemailer = require("nodemailer");
 
-function sendEmailWithAttachment(email) {
+function sendEmailWithAttachment(email, tempBookId) {
   return new Promise((resolve, reject) => {
     nodemailer.createTestAccount((err, testAccount) => {
       if (err) {
@@ -10,33 +10,33 @@ function sendEmailWithAttachment(email) {
       }
 
       const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+        host: "smtp.gmail.com",
         port: 587,
         secure: false,
         auth: {
           user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
+          pass: process.env.EMAIL_PASS,
+        },
       });
 
       const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: email, 
-        subject: 'PDF with QR Code',
-        text: 'Hello,\n\nYou have successfully completed your booking. Please find the PDF with QR code attached.',
+        to: email,
+        subject: "PDF with QR Code",
+        text: "Hello,\n\nYou have successfully completed your booking. Please find the PDF with QR code attached.",
         attachments: [
           {
-            filename: 'output.pdf',
-            path: 'output.pdf'
-          }
-        ]
+            filename: `${tempBookId}.pdf`,
+            path: `pdf/${tempBookId}.pdf`,
+          },
+        ],
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           reject(error);
         } else {
-          console.log('Email sent:', info.response);
+          console.log("Email sent:", info.response);
 
           // Log URL for viewing the sent email in Ethereal
           //console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
