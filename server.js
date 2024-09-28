@@ -8,6 +8,8 @@ const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/dbconn");
 const mongoose = require("mongoose");
 const { task1 } = require("./jobs/DailyJob");
+const Admin = require("./model/Admin");
+const bcrypt = require("bcrypt");
 
 // Start the cron job
 task1.start();
@@ -66,6 +68,21 @@ app.use(errorHandle);
 
 mongoose.connection.once("open", () => {
   console.log("Database connected");
+
+  //it should create admin if not exists
+  const createAdmin = async () => {
+    const admin = await Admin.findOne({ username: "admin" }).exec();
+    if (!admin) {
+      const hash = bcrypt.hashSync("00000", 10);
+      const newAdmin = new Admin({
+        username: "admin",
+        password: hash,
+      });
+      await newAdmin.save();
+      console.log("Admin created");
+    }
+  };
+  createAdmin();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

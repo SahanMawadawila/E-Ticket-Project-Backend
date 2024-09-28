@@ -104,8 +104,9 @@ const makePayment = asyncHandler(async (req, res) => {
     ],
 
     mode: "payment",
-    success_url: "http://localhost:5173/payment-success",
-    cancel_url: "http://localhost:5173/",
+    customer_email: email,
+    success_url: process.env.FRONTEND_URL + "/payment-success",
+    cancel_url: process.env.FRONTEND_URL + "/",
     metadata: {
       tempBookId: tempBookId,
     },
