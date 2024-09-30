@@ -11,6 +11,8 @@ const { task1 } = require("./jobs/DailyJob");
 const Admin = require("./model/Admin");
 const bcrypt = require("bcrypt");
 
+const fs = require("fs");
+
 // Start the cron job
 task1.start();
 
@@ -63,6 +65,27 @@ app.all("*", (req, res) => {
     res.type("txt").send("Page not found");
   }
 });
+
+const rootDir = path.resolve(__dirname);
+const uploadsDir = path.join(rootDir, "uploads");
+const pdfDir = path.join(rootDir, "pdf");
+const bussesDir = path.join(uploadsDir, "busses");
+const checkersDir = path.join(uploadsDir, "checkers");
+
+const ensureDirectoryExists = (dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Directory created: ${dir}`);
+  }
+};
+
+// Ensure root directories exist
+ensureDirectoryExists(uploadsDir);
+ensureDirectoryExists(pdfDir);
+
+// Ensure subdirectories inside uploads exist
+ensureDirectoryExists(bussesDir);
+ensureDirectoryExists(checkersDir);
 
 app.use(errorHandle);
 
