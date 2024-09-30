@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const dayjs = require("dayjs");
 const weekdayOrWeekendFinder = require("../utils/weekdayOrWeekendFinder");
 const Booking = require("../model/Booking");
+const fsPromises = require("fs").promises;
 
 const bookingOpen = asyncHandler(async () => {
   const buses = await Bus.find();
@@ -94,12 +95,26 @@ const deleteFreezeDays = asyncHandler(async () => {
   await Bus.bulkWrite(operations);
 });
 
+//delete pdfs after 3 days
+const deletePDFs = async () => {
+  const threeDaysAgo = dayjs().subtract(3, "day").format("YYYY-MM-DD");
+  const files = await fsPromises.readdir("./pdf");
+  console.log(files);
+  files.forEach(async (file) => {
+    if (file.includes(threeDaysAgo)) {
+      console.log(`Deleted ${file}`);
+      await fsPromises.unlink(`./pdf/${file}`);
+    }
+  });
+};
+
 const task1 = cron.schedule(
-  "19 23 * * *",
+  "43 01 * * *",
   () => {
     bookingOpen();
     deleteBooking();
     deleteFreezeDays();
+    deletePDFs();
     console.log(
       `Booking open until ${dayjs().add(3, "day").format("YYYY-MM-DD")}`
     );

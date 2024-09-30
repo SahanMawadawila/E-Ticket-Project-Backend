@@ -9,6 +9,7 @@ const convertTimeToFloat = require("../utils/convertTimeToFloat");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const crypto = require("crypto");
 const paymentStore = require("../db/store");
+//const dayjs = require("dayjs");
 //const { Console } = require("console");
 
 /* let globalVars = {
@@ -35,8 +36,10 @@ const paymentStore = require("../db/store");
 
 const generateRandomStringAndStoreDetails = (data) => {
   const id = crypto.randomBytes(16).toString("hex");
-  paymentStore[id] = data;
-  return id;
+  const currentDateFromLibrary = dayjs().format("YYYY-MM-DD");
+  const temp = id + currentDateFromLibrary;
+  paymentStore[temp] = data;
+  return temp;
 };
 
 const makePayment = asyncHandler(async (req, res) => {
@@ -89,6 +92,9 @@ const makePayment = asyncHandler(async (req, res) => {
     return res.sendStatus(404);
   }
 
+  /* const currentDateFromLibrary = dayjs().format("YYYY-MM-DD");
+  const temp = tempBookId + currentDateFromLibrary; */
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -113,6 +119,8 @@ const makePayment = asyncHandler(async (req, res) => {
   });
 
   //console.log("TempBookId: ", tempBookId);
+
+  //console.log("TempBookId: ", temp);
   res.json({ id: session.id, tempBookId: tempBookId });
 });
 
