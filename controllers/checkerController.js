@@ -17,6 +17,7 @@ const getCheckers = asyncHandler(async (req, res) => {
 
 //add a checker
 const addChecker = asyncHandler(async (req, res) => {
+  console.log("now called add checker function");
   const { name, email, password, telephone, companyName } = req.body;
 
   if (!name || !email || !password || !telephone || !companyName) {
