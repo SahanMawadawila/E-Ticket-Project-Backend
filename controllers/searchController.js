@@ -13,6 +13,9 @@ const search = asyncHandler(async (req, res) => {
   if (from === to)
     return res.status(400).json({ message: "From and To cannot be the same" });
 
+  if (dayjs(date).isBefore(dayjs(), "day"))
+    return res.status(400).json({ message: "Past dates cannot be booked" });
+
   //if the date is yesterday then return empty array because buses are started its journey
   if (
     !isToday &&
@@ -127,7 +130,7 @@ const search = asyncHandler(async (req, res) => {
 
     for (let j = 0; j < bus.seats.length; j++) {
       let seat = bus.seats[j];
-      seat.availabilityBoolean = false;
+      seat.availabilityBoolean = 0;
       if (!seat.isBookable) {
         continue;
       }
@@ -152,42 +155,60 @@ const search = asyncHandler(async (req, res) => {
           }
 
           //when booked object.city === from
-          if (!booked[l].take) {
+          if (booked[l].take === 0) {
             //when take false if true.
             let x = l + 1;
-            let isgoneThrough = false;
+            let isgoneThrough = 0;
             while (x < booked.length && booked[x].city !== to) {
               //while flase when booked[x].city === to
-              if (booked[x].take) {
-                isgoneThrough = true;
+              if (booked[x].take == 1) {
+                isgoneThrough = 1; //1 means taken
+                break;
+              } else if (booked[x].take == 2) {
+                isgoneThrough = 2; //2 means processing
                 break;
               }
               x++;
             }
             if (!isgoneThrough) {
-              seat.availabilityBoolean = true;
+              seat.availabilityBoolean = 3;
               totalAvailableSeats++;
+            } else if (isgoneThrough == 1) {
+              seat.availabilityBoolean = 1;
+            } else if (isgoneThrough == 2) {
+              seat.availabilityBoolean = 2;
             }
             break;
           } else if (booked[l].take && !booked[l + 1].take) {
             //when take true this execute
 
             let x = l + 1;
-            let isgoneThrough = false;
+            let isgoneThrough = 0;
             while (x < booked.length && booked[x].city !== to) {
-              if (booked[x].take) {
-                isgoneThrough = true;
+              if (booked[x].take === 1) {
+                isgoneThrough = 1;
+                break;
+              } else if (booked[x].take === 2) {
+                isgoneThrough = 2;
                 break;
               }
               x++;
             }
             if (!isgoneThrough) {
-              seat.availabilityBoolean = true;
+              seat.availabilityBoolean = 3;
               totalAvailableSeats++;
+            } else if (isgoneThrough == 1) {
+              seat.availabilityBoolean = 1;
+            } else if (isgoneThrough == 2) {
+              seat.availabilityBoolean = 2;
             }
+
+            break;
+          } else if (booked[l].take === 1) {
+            seat.availabilityBoolean = 1;
             break;
           } else {
-            break;
+            seat.availabilityBoolean = 2;
           }
         }
       }

@@ -92,6 +92,52 @@ const makePayment = asyncHandler(async (req, res) => {
     return res.sendStatus(404);
   }
 
+  //make that seats as processing
+  const seatSplit = seats.split(",");
+  const seatNumbers = seatSplit.map(Number);
+  const seatsObjectArray = bus.seats.filter((seat) =>
+    seatNumbers.includes(seat.seatNumber)
+  );
+  //for all seats
+  for (let i = 0; i < seatsObjectArray.length; i++) {
+    const seatObj = seatsObjectArray[i]; //take one seat
+    //object inside availability where date is equal to date
+
+    let availability = {};
+    if (
+      convertTimeToFloat(busDepartureTime) <= convertTimeToFloat(departureTime)
+    ) {
+      availability = seatObj.availability.find((obj) => obj.date === date);
+    } else {
+      availability = seatObj.availability.find(
+        (obj) =>
+          obj.date === dayjs(date).subtract(1, "day").format("YYYY-MM-DD")
+      );
+    }
+
+    console.log(availability); //availability is a object
+    if (!availability) {
+      return res.sendStatus(404);
+    }
+    //object inside booked where city is equal to from
+    for (let j = 0; j < availability.booked.length; j++) {
+      if (availability.booked[j].city !== from) {
+        continue;
+      }
+      availability.booked[j].take = 2;
+      for (let k = j + 1; k < availability.booked.length; k++) {
+        if (availability.booked[k].city === to) {
+          availability.booked[k].take = 2;
+          break;
+        }
+        availability.booked[k].take = 2;
+      }
+      break;
+    }
+  }
+
+  await bus.save();
+
   /* const currentDateFromLibrary = dayjs().format("YYYY-MM-DD");
   const temp = tempBookId + currentDateFromLibrary; */
 
@@ -175,13 +221,13 @@ const addBooking = async (data, tempBookId) => {
       if (availability.booked[j].city !== from) {
         continue;
       }
-      availability.booked[j].take = true;
+      availability.booked[j].take = 1;
       for (let k = j + 1; k < availability.booked.length; k++) {
         if (availability.booked[k].city === to) {
-          availability.booked[k].take = true;
+          availability.booked[k].take = 1;
           break;
         }
-        availability.booked[k].take = true;
+        availability.booked[k].take = 1;
       }
       break;
     }

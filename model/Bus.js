@@ -74,8 +74,8 @@ const busSchema = new mongoose.Schema({
             {
               city: String,
               take: {
-                type: Boolean,
-                default: false,
+                type: Number, // 0: not taken, 1: taken, 2: processing
+                default: 0,
               },
             },
           ],
