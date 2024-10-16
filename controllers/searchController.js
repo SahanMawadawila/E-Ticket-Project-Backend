@@ -13,7 +13,7 @@ const search = asyncHandler(async (req, res) => {
   if (from === to)
     return res.status(400).json({ message: "From and To cannot be the same" });
 
-  if (dayjs(date).isBefore(dayjs(), "day"))
+  if (isToday && dayjs(date).isBefore(dayjs(), "day"))
     return res.status(400).json({ message: "Past dates cannot be booked" });
 
   //if the date is yesterday then return empty array because buses are started its journey

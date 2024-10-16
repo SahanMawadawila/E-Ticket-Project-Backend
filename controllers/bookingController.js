@@ -43,7 +43,6 @@ const generateRandomStringAndStoreDetails = (data) => {
 };
 
 const makePayment = asyncHandler(async (req, res) => {
-  const tempBookId = generateRandomStringAndStoreDetails(req.body);
   const {
     id,
     email,
@@ -92,6 +91,8 @@ const makePayment = asyncHandler(async (req, res) => {
     return res.sendStatus(404);
   }
 
+  const tempBookId = generateRandomStringAndStoreDetails(req.body);
+
   //make that seats as processing
   const seatSplit = seats.split(",");
   const seatNumbers = seatSplit.map(Number);
@@ -124,11 +125,35 @@ const makePayment = asyncHandler(async (req, res) => {
       if (availability.booked[j].city !== from) {
         continue;
       }
+      if (
+        availability.booked[j].take === 1 ||
+        availability.booked[j].take === 2
+      ) {
+        return res
+          .status(409)
+          .json({ message: "Sorry someone is processing that seat" });
+      }
       availability.booked[j].take = 2;
       for (let k = j + 1; k < availability.booked.length; k++) {
         if (availability.booked[k].city === to) {
+          if (
+            availability.booked[k].take === 1 ||
+            availability.booked[k].take === 2
+          ) {
+            return res
+              .status(409)
+              .json({ message: "Sorry someone is processing that seat" });
+          }
           availability.booked[k].take = 2;
           break;
+        }
+        if (
+          availability.booked[k].take === 1 ||
+          availability.booked[k].take === 2
+        ) {
+          return res
+            .status(409)
+            .json({ message: "Sorry someone is processing that seat" });
         }
         availability.booked[k].take = 2;
       }
@@ -162,6 +187,7 @@ const makePayment = asyncHandler(async (req, res) => {
     metadata: {
       tempBookId: tempBookId,
     },
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 30, // expires in 30 minutes
   });
 
   //console.log("TempBookId: ", tempBookId);
