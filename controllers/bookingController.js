@@ -38,7 +38,8 @@ const generateRandomStringAndStoreDetails = (data) => {
   const id = crypto.randomBytes(16).toString("hex");
   const currentDateFromLibrary = dayjs().format("YYYY-MM-DD");
   const temp = id + currentDateFromLibrary;
-  paymentStore[temp] = data;
+  const dataWithCurrentTime = { ...data, createdAt: dayjs().toISOString() };
+  paymentStore[temp] = dataWithCurrentTime;
   return temp;
 };
 
@@ -125,36 +126,33 @@ const makePayment = asyncHandler(async (req, res) => {
       if (availability.booked[j].city !== from) {
         continue;
       }
-      if (
-        availability.booked[j].take === 1 ||
-        availability.booked[j].take === 2
+      /* if (
+        (availability.booked[j + 1].take === 1 &&
+          availability.booked[j + 1].city !== to) ||
+        (availability.booked[j + 1].take === 2 &&
+          availability.booked[j + 1].city !== to)
       ) {
         return res
           .status(409)
           .json({ message: "Sorry someone is processing that seat" });
       }
+      if (
+        availability.booked[j + 1].city === to &&
+        (availability.booked[j + 2] === undefined ||
+          availability.booked[j + 2]?.take !== 1 ||
+          availability.booked[j + 2]?.take !== 2)
+      ) {
+        return res
+          .status(409)
+          .json({ message: "Sorry someone is processing that seat" });
+      } */
       availability.booked[j].take = 2;
       for (let k = j + 1; k < availability.booked.length; k++) {
         if (availability.booked[k].city === to) {
-          if (
-            availability.booked[k].take === 1 ||
-            availability.booked[k].take === 2
-          ) {
-            return res
-              .status(409)
-              .json({ message: "Sorry someone is processing that seat" });
-          }
           availability.booked[k].take = 2;
           break;
         }
-        if (
-          availability.booked[k].take === 1 ||
-          availability.booked[k].take === 2
-        ) {
-          return res
-            .status(409)
-            .json({ message: "Sorry someone is processing that seat" });
-        }
+
         availability.booked[k].take = 2;
       }
       break;
@@ -188,12 +186,18 @@ const makePayment = asyncHandler(async (req, res) => {
       tempBookId: tempBookId,
     },
     expires_at: Math.floor(Date.now() / 1000) + 60 * 30, // expires in 30 minutes
+
+    payment_intent_data: {
+      metadata: {
+        tempBookId: tempBookId,
+      },
+    },
   });
 
   //console.log("TempBookId: ", tempBookId);
 
   //console.log("TempBookId: ", temp);
-  res.json({ id: session.id, tempBookId: tempBookId });
+  res.json({ url: session.url, tempBookId: tempBookId });
 });
 
 const addBooking = async (data, tempBookId) => {

@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const { task1 } = require("./jobs/DailyJob");
 const Admin = require("./model/Admin");
 const bcrypt = require("bcrypt");
+const sheduler = require("./utils/timeCheck");
 
 const fs = require("fs");
 
@@ -23,6 +24,8 @@ connectDB();
 app.use(logger);
 app.use(cors(corsOptions));
 
+// Start the sheduler
+sheduler();
 // Middleware to capture raw body
 const rawBodyMiddleware = (req, res, next) => {
   req.rawBody = "";
