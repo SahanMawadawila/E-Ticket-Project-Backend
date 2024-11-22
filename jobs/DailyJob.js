@@ -41,7 +41,10 @@ const bookingOpen = asyncHandler(async () => {
                     booked: seat.availability[0].booked.map((obj) => {
                       return {
                         city: obj.city,
-                        take: false,
+                        take: {
+                          in: 0,
+                          out: 0,
+                        },
                       };
                     }),
                   });

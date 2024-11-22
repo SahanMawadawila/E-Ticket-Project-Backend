@@ -155,16 +155,17 @@ const search = asyncHandler(async (req, res) => {
           }
 
           //when booked object.city === from
-          if (booked[l].take === 0) {
+          //have to change from this point
+          if (booked[l].take.out === 0) {
             //when take false if true.
             let x = l + 1;
             let isgoneThrough = 0;
             while (x < booked.length && booked[x].city !== to) {
               //while flase when booked[x].city === to
-              if (booked[x].take == 1) {
+              if (booked[x].take.in == 1 || booked[x].take.out == 1) {
                 isgoneThrough = 1; //1 means taken
                 break;
-              } else if (booked[x].take == 2) {
+              } else if (booked[x].take.in == 2 || booked[x].take.out == 2) {
                 isgoneThrough = 2; //2 means processing
                 break;
               }
@@ -179,36 +180,12 @@ const search = asyncHandler(async (req, res) => {
               seat.availabilityBoolean = 2;
             }
             break;
-          } else if (booked[l].take && !booked[l + 1].take) {
-            //when take true this execute
-
-            let x = l + 1;
-            let isgoneThrough = 0;
-            while (x < booked.length && booked[x].city !== to) {
-              if (booked[x].take === 1) {
-                isgoneThrough = 1;
-                break;
-              } else if (booked[x].take === 2) {
-                isgoneThrough = 2;
-                break;
-              }
-              x++;
-            }
-            if (!isgoneThrough) {
-              seat.availabilityBoolean = 3;
-              totalAvailableSeats++;
-            } else if (isgoneThrough == 1) {
-              seat.availabilityBoolean = 1;
-            } else if (isgoneThrough == 2) {
-              seat.availabilityBoolean = 2;
-            }
-
+          } else if (booked[l].take.out === 1) {
+            seat.availabilityBoolean = 1; //availabilityBoolean 1 means booked
             break;
-          } else if (booked[l].take === 1) {
-            seat.availabilityBoolean = 1;
+          } else if (booked[l].take.out === 2) {
+            seat.availabilityBoolean = 2; //availabilityBoolean 2 means processing
             break;
-          } else {
-            seat.availabilityBoolean = 2;
           }
         }
       }

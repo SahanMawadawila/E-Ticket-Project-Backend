@@ -53,20 +53,16 @@ async function checkTimeOut() {
             continue;
           }
 
-          if (availability.booked[j].take === 2) {
-            availability.booked[j].take = 0;
-          }
+          availability.booked[j].take.out = 0;
 
           for (let k = j + 1; k < availability.booked.length; k++) {
             if (availability.booked[k].city === to) {
-              if (availability.booked[j].take === 2) {
-                availability.booked[j].take = 0;
-              }
+              availability.booked[j].take.in = 0;
+
               break;
             }
-            if (availability.booked[j].take === 2) {
-              availability.booked[j].take = 0;
-            }
+            availability.booked[j].take.out = 0;
+            availability.booked[j].take.in = 0;
           }
           break;
         }
