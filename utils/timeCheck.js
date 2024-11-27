@@ -13,7 +13,7 @@ async function checkTimeOut() {
     const createdAtTime = dayjs(createdAt);
 
     //expired after 5 minutes
-    if (currentTime.diff(createdAtTime, "minute") > 1) {
+    if (currentTime.diff(createdAtTime, "minute") > 5) {
       //timeout after 1 minute
       const { busId, seats, date, from, to, busDepartureTime, departureTime } =
         paymentStore[key];

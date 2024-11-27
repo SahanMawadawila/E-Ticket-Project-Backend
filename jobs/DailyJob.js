@@ -112,7 +112,7 @@ const deletePDFs = async () => {
 };
 
 const task1 = cron.schedule(
-  "43 01 * * *",
+  "48 08 * * *",
   () => {
     bookingOpen();
     deleteBooking();
